@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer"; // 1. Import the Footer
+//import Footer from "@/components/Footer"; // 1. Import the Footer
 import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-1 flex flex-col min-h-0">
             {children}
           </main>
-          <Footer /> {/* 2. Add the Footer here */}
+           {/* <Footer /> 2. Add the Footer here */}
           </ThemeRegistry>
         </AuthProvider>
         

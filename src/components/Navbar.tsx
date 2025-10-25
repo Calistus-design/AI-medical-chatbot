@@ -1,114 +1,81 @@
 // File: src/components/Navbar.tsx
-
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material';
+import { useState } from 'react'; // <-- ADDED 'useState' HERE
+import NextLink from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import MenuIcon from '@mui/icons-material/Menu'; // The "hamburger" icon
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close'; 
 
 export default function Navbar() {
-  // State to manage whether the mobile drawer is open or closed
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { session, supabase, isSidebarOpen, toggleSidebar } = useAuth(); // Removed isSidebarOpen, not needed here
+  const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    handleClose();
+    router.push('/');
+    router.refresh();
   };
 
-  // This is the content of our slide-out drawer menu
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        Menu
-      </Typography>
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} href="/">
-            <ListItemText primary="Home" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} href="/about">
-            <ListItemText primary="About" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </Box>
-  );
-
   return (
-    <>
-      <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Toolbar>
-          <LocalHospitalIcon sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} /> {/* Increased size */}
-          <Typography
-            variant="h5" // Changed from h6 to h5
-            component="div"
-            sx={{ flexGrow: 1, color: 'dark-text', fontWeight: 'bold' }}
-          >
-            AI First-Aid
-          </Typography>
-
-          {/* This is the hamburger icon. It only appears on small screens ('xs') */}
+    <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider', height: '65px' }}>
+      <Toolbar>
+        {session && (
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }} // Hide on medium screens and up
+            onClick={toggleSidebar}
+            sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            {isSidebarOpen ? <CloseIcon /> : <MenuIcon />} 
           </IconButton>
-
-          {/* This Box contains the links that appear on large screens */}
-          <Box sx={{ display: { xs: 'none', md: 'block' } }}> {/* Hide on extra-small screens */}
-            <Button color="inherit" component={Link} href="/">Home</Button>
-            <Button color="inherit" component={Link} href="/about">About</Button>
-            <Button
-              variant="contained"
-              color="success"
-              component={Link}
-              href="/hospitals"
-              sx={{
-                ml: 2,
-                backgroundColor: 'action-green',
-                '&:hover': { backgroundColor: 'green.700' },
-              }}
-            >
-              Find Hospital
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      
-      {/* This is the Drawer component that slides out */}
-      <nav>
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }} // Better for mobile performance
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </nav>
-    </>
+        )}
+        <LocalHospitalIcon sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} />
+        <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+          <NextLink href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            AI First-Aid
+          </NextLink>
+        </Typography>
+        <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+          <Button component={NextLink} href="/" color="inherit">Home</Button>
+          <Button component={NextLink} href="/about" color="inherit">About</Button>
+          <Button component={NextLink} href="/hospitals" variant="contained" sx={{ backgroundColor: 'action-green', '&:hover':{backgroundColor:'green.700'}, mx: 2 }}>
+            Find Hospital
+          </Button>
+          {session ? (
+            <div>
+              <IconButton onClick={handleMenu} sx={{ p: 0 }}>
+                <Avatar alt={session.user?.email || ''} src={session.user?.user_metadata?.avatar_url} />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                keepMounted
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                open={Boolean(anchorEl)} // <-- ADDED THIS 'open' PROP
+                onClose={handleClose}
+              >
+                <MenuItem component={NextLink} href="/profile" onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </div>
+          ) : (
+            <Button component={NextLink} href="/login" variant="outlined">Log In</Button>
+          )}
+        </Box>
+        {/* You may want to add a mobile menu here for non-auth pages if needed */}
+      </Toolbar>
+    </AppBar>
   );
 }

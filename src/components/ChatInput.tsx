@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
+import TextareaAutosize from 'react-textarea-autosize';
 
 // This defines the props (inputs) our component will accept.
 // It needs a function called `onSendMessage` to call when the user sends a message.
@@ -32,23 +33,37 @@ export default function ChatInput({ onSendMessage }: ChatInputProps) {
     }
   };
 
-  return (
-    // We attach the handleSubmit function to the form's `onSubmit` event.
+  // Check if the input contains a newline character. This is a reliable way
+  // to know if the user is typing on more than one line.
+  const isMultiLine = input.includes('\n');
+
+  // Conditionally choose the border-radius class.
+  const borderRadiusClass = isMultiLine ? 'rounded-2xl' : 'rounded-full';
+
+return (
+    // 1. The form is now a "relative" container, which acts as an anchor for the button.
     <form
       onSubmit={handleSubmit}
-      className="w-full flex items-center"
+      className="w-full relative flex items-center"
     >
-      <textarea
-        className="flex-1 resize-none border rounded-lg bg-transparent p-2 text-dark-text focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      {/* 2. The textarea is styled to be a rounded pill and has extra padding on the right */}
+      <TextareaAutosize
+        className={`w-full resize-none border ${borderRadiusClass} bg-transparent p-4 pr-14 text-lg 
+        text-dark-text focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-200`}
         placeholder="Type your message..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyPress}
-        rows={1}
+        minRows={1}
+        maxRows={6}
       />
+      
+      {/* 3. The button is "absolutely" positioned inside the form container */}
       <button
         type="submit"
-        className="ml-2 p-2 rounded-full bg-action-green text-white hover:bg-green-700 disabled:bg-gray-400"
+        className={`absolute right-3 ${isMultiLine ? 'bottom-3' : 'top-1/2 -translate-y-1/2'} p-2 
+        rounded-full bg-action-green text-white hover:bg-green-700 disabled:bg-gray-400 
+        disabled:cursor-not-allowed transition-all duration-200`}
         disabled={!input.trim()}
       >
         <SendIcon />

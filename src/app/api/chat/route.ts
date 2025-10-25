@@ -1,4 +1,4 @@
-// UPGRADED SIMULATED BACKEND - Now with Severity Classification
+// File: src/app/api/chat/route.ts
 
 import { NextResponse } from "next/server";
 
