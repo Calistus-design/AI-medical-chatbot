@@ -2,39 +2,30 @@
 
 import { type EmailOtpType } from '@supabase/supabase-js';
 import { type NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server'; // <-- IMPORT OUR NEW SERVER CLIENT
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
-  
-  // This is the robust part: we get BOTH possible parameters.
-  // The 'code' is for Google login, 'token_hash' is for email confirmation.
-  const code = searchParams.get('code');
+  const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
+  const next = searchParams.get('next') ?? '/';
 
-  // Define the success redirect URL.
-  const redirectUrl = origin;
+  // Create a URL to redirect to after confirmation
+  const redirectTo = request.nextUrl.clone();
+  redirectTo.pathname = next;
 
-  // First, handle the email confirmation flow
-  if (token_hash && type === 'signup') {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { error } = await supabase.auth.verifyOtp({ type, token_hash });
+  if (token_hash && type) {
+    const supabase = await createClient(); // <-- USE OUR NEW ASYNC CLIENT
+    const { error } = await supabase.auth.verifyOtp({
+      type,
+      token_hash,
+    });
     if (!error) {
-      return NextResponse.redirect(redirectUrl);
+      return NextResponse.redirect(redirectTo);
     }
   }
-  
-  // As a fallback, handle the OAuth flow (though this is usually done on /auth/callback)
-  if (code) {
-    const supabase = createRouteHandlerClient({ cookies });
-    await supabase.auth.exchangeCodeForSession(code);
-    return NextResponse.redirect(redirectUrl);
-  }
 
-  // If neither flow succeeds, redirect to a proper error page.
-  // This redirect is now using an ABSOLUTE URL.
-  const errorRedirect = `${origin}/auth/auth-code-error`;
-  return NextResponse.redirect(errorRedirect);
+  // return the user to an error page with some instructions
+  redirectTo.pathname = '/auth/auth-code-error';
+  return NextResponse.redirect(redirectTo);
 }

@@ -1,5 +1,5 @@
 // File: scripts/seed.mjs
-// REVISED to use the Supabase client library
+// this script is deprecated use the seed-csv.mjs script instead
 
 import { createClient } from '@supabase/supabase-js';
 import 'dotenv/config';

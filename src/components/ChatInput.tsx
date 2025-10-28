@@ -10,22 +10,22 @@ import TextareaAutosize from 'react-textarea-autosize';
 // It needs a function called `onSendMessage` to call when the user sends a message.
 interface ChatInputProps {
   onSendMessage: (text: string) => void;
+  disabled: boolean;
 }
 
-export default function ChatInput({ onSendMessage }: ChatInputProps) {
+export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [input, setInput] = useState('');
 
-  // THIS IS THE FUNCTION THAT WAS MISSING.
-  // It handles the logic for when the form is submitted.
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // This is crucial to prevent the page from reloading.
-    if (input.trim()) {
-      onSendMessage(input.trim()); // Call the function from the parent page.
-      setInput(''); // Clear the input field after sending.
+    e.preventDefault();
+    if (input.trim() && !disabled) { // Also check if disabled here
+      onSendMessage(input.trim());
+      setInput('');
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (disabled) return;
     // Check if the Enter key is pressed AND the Shift key is NOT pressed
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault(); // Prevent the default action (adding a new line)
@@ -50,12 +50,13 @@ return (
       <TextareaAutosize
         className={`w-full resize-none border ${borderRadiusClass} bg-transparent p-4 pr-14 text-lg 
         text-dark-text focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-200`}
-        placeholder="Type your message..."
+         placeholder={disabled ? "AI is responding..." : "Type your message..."} // <-- Optional: Change placeholder
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyPress}
         minRows={1}
         maxRows={6}
+        
       />
       
       {/* 3. The button is "absolutely" positioned inside the form container */}
@@ -64,7 +65,7 @@ return (
         className={`absolute right-3 ${isMultiLine ? 'bottom-3' : 'top-1/2 -translate-y-1/2'} p-2 
         rounded-full bg-action-green text-white hover:bg-green-700 disabled:bg-gray-400 
         disabled:cursor-not-allowed transition-all duration-200`}
-        disabled={!input.trim()}
+        disabled={!input.trim() || disabled} // <-- MODIFY THIS LINE
       >
         <SendIcon />
       </button>

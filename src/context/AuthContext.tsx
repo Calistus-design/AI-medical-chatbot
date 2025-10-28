@@ -3,15 +3,15 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Session, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client'; // <-- IMPORT THE NEW CLIENT-SIDE HELPER
+import type { SupabaseClient, Session } from '@supabase/supabase-js';
 
-// Define the shape of our context data - NOW CORRECT
+// Define the shape of our context data
 interface AuthContextType {
   supabase: SupabaseClient;
   session: Session | null;
-  isSidebarOpen: boolean;         // <-- ADDED THIS LINE
-  toggleSidebar: () => void;      // <-- ADDED THIS LINE
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
 }
 
 // Create the context
@@ -19,20 +19,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Create the AuthProvider component
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const supabase = createClientComponentClient();
+  // Use the new client-side helper to create the Supabase client
+  const supabase = createClient();
   const [session, setSession] = useState<Session | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // This useEffect is crucial for keeping the session up-to-date in real-time
   useEffect(() => {
+    // This effect runs once to get the initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
+    // This listener fires on LOGIN, LOGOUT, and other auth events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
+    // Cleanup the subscription when the component unmounts
     return () => subscription.unsubscribe();
   }, [supabase]);
 
@@ -40,7 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsSidebarOpen(prev => !prev);
   };
 
-  // The value now matches the AuthContextType interface
   const value = {
     supabase,
     session,
@@ -51,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// Custom hook remains the same
+// Custom hook to easily access the context
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

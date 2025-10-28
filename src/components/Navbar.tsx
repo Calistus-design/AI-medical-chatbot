@@ -26,7 +26,7 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider', height: '65px' }}>
+    <AppBar position="sticky" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider', height: '65px' }}>
       <Toolbar>
         {session && (
           <IconButton

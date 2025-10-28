@@ -1,20 +1,19 @@
 // File: src/app/api/messages/route.ts
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server'; // <-- IMPORT OUR NEW SERVER CLIENT
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = await createClient(); // <-- USE OUR NEW ASYNC CLIENT
   const { conversation_id, content, role } = await req.json();
 
   try {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    // Here, our Row Level Security policy is doing the hard work.
-    // It will automatically prevent a user from inserting a message
-    // into a conversation they do not own.
+    // The logic remains the same, but now it uses the new, correctly authenticated client.
     const { data, error } = await supabase
       .from('messages')
       .insert({
@@ -24,7 +23,9 @@ export async function POST(req: Request) {
         user_id: session.user.id, // We always set the user_id on the server
       });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

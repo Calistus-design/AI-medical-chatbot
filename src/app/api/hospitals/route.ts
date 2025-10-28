@@ -1,47 +1,45 @@
 // File: src/app/api/hospitals/route.ts
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server'; // <-- IMPORT OUR NEW, CORRECT SERVER CLIENT
 import { NextResponse } from 'next/server';
 
-// This endpoint will receive a POST request containing the user's coordinates.
-
 export async function POST(req: Request) {
+  const supabase = await createClient(); // <-- USE THE NEW ASYNC CLIENT
+  const body = await req.json();
+
   try {
-    // Initialize the Supabase client using the secure environment variables.
-    // This client has admin privileges to talk to our database.
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    // SCENARIO 1: Search by Geolocation
+    if (body.latitude && body.longitude) {
+      const { latitude, longitude } = body;
+      const { data, error } = await supabase.rpc('find_nearest_hospitals', {
+        target_lat: latitude,
+        target_lon: longitude,
+      });
 
-    // Get the latitude and longitude from the body of the request.
-    const { latitude, longitude } = await req.json();
-
-    // A simple validation to make sure we received the coordinates.
-    if (!latitude || !longitude) {
-      return NextResponse.json({ error: 'Latitude and longitude are required.' }, { status: 400 });
+      if (error) throw error;
+      return NextResponse.json(data);
     }
 
-    // This is the key part: we are calling a special database function.
-    // 'rpc' stands for Remote Procedure Call. We are calling the function
-    // named 'find_nearest_hospitals' that we will create in the next part.
-    const { data, error } = await supabase.rpc('find_nearest_hospitals', {
-      target_lat: latitude,
-      target_lon: longitude
-    });
+    // SCENARIO 2: Search by Name
+    else if (body.searchTerm) {
+      const { searchTerm } = body;
+      const { data, error } = await supabase.rpc('search_hospitals_by_name', {
+        search_term: searchTerm,
+      });
 
-    // If the database function returns an error, we'll send it back.
-    if (error) {
-      throw error;
+      if (error) throw error;
+      return NextResponse.json(data);
     }
 
-    // If successful, send the list of hospitals back to the frontend.
-    return NextResponse.json(data);
-
-  } catch (error: any) {   
-    // If any part of the process fails, log the error on the server
-    // and send a generic failure message to the frontend.
-    console.error("Error fetching nearest hospitals:", error);
+    // SCENARIO 3: Invalid Request
+    else {
+      return NextResponse.json(
+        { error: 'Invalid request. Provide either location or a search term.' },
+        { status: 400 }
+      );
+    }
+  } catch (error: any) {
+    console.error("Error in hospitals API:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
