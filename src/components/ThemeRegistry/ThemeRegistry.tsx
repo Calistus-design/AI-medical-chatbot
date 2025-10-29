@@ -31,9 +31,9 @@ export default function ThemeRegistry(props: { options: { key: string }; childre
     let inserted: string[] = [];
     cache.insert = (...args) => {
       const serialized = args[1];
-      // @ts-ignore - The linter incorrectly flags this, but it is the expected runtime behavior.
+     // @ts-expect-error - The linter incorrectly flags this, but it is the expected runtime behavior.
       if (cache.inserted[serialized] === undefined) {
-        // @ts-ignore
+        // @ts-expect-error - The linter incorrectly flags this, but it is the expected runtime behavior.
         inserted.push(serialized);
       }
       return prevInsert(...args);
