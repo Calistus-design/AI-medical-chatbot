@@ -57,8 +57,8 @@ async function seedFromCsv() {
 
   console.log(`✅ Transformed ${transformedData.length} valid rows for insertion.`);
 
-  if (transformedData.length === 0) {
-    console.log('No valid data to insert. Exiting.');
+  if (transformedData.length === 0) {         
+    console.log('No valid data to insert. Exiting.');  
     return;
   }
 

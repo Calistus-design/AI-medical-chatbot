@@ -53,10 +53,11 @@ export default function HospitalsPage() {
       const data: Hospital[] = await response.json();
       setHospitals(data);
       setStatus('success');
-    } catch (err: any) {
-      setError(err.message);
-      setStatus('error');
-    }
+    } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+    setError(errorMessage);
+    setStatus('error');
+}
   };
 
   // This useEffect still runs on page load to get location

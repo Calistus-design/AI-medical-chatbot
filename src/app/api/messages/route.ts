@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     // The logic remains the same, but now it uses the new, correctly authenticated client.
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('messages')
       .insert({
         conversation_id,
@@ -28,7 +28,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+}
 }

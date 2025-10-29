@@ -29,7 +29,7 @@ export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
     // Check if the Enter key is pressed AND the Shift key is NOT pressed
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault(); // Prevent the default action (adding a new line)
-      handleSubmit(e as any); // Trigger the form submission
+      handleSubmit(e as unknown as React.FormEvent); // A safer type cast
     }
   };
 

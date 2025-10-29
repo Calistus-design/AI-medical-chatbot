@@ -34,9 +34,10 @@ export async function GET(
     }
 
     return NextResponse.json(messages);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+}
 }
 
 export async function DELETE(
@@ -63,9 +64,10 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true, message: 'Conversation deleted.' });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+}
 }
 
 
@@ -109,7 +111,8 @@ export async function PATCH(
 
     return NextResponse.json(data); // Return the updated conversation
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+}
 }

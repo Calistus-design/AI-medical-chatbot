@@ -13,7 +13,7 @@ export default function ContactPage() {
           Contact & Collaboration
         </Typography>
         <Typography variant="body1" paragraph>
-          This project was developed by Calistus-design's Org. We believe in open-source collaboration and welcome feedback, bug reports, and contributions from the community.
+          This project was developed by Calistus, Brian and Samwel. We believe in open-source collaboration and welcome feedback, bug reports, and contributions from the community.
         </Typography>
         <Typography variant="body1" paragraph>
           The best way to get in touch, view the source code, and see the list of contributors is through our official GitHub repository.

@@ -57,8 +57,9 @@ export async function POST(req: Request) {
 // We just need to pass it through directly.
 return NextResponse.json(aiData);
 
-  } catch (error: any) {
-    console.error("--- ERROR IN /api/chat ROUTE ---", error);
+  } catch (error: unknown) { // Use 'unknown' instead of 'any'
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("--- ERROR IN /api/chat ROUTE ---", errorMessage);
     return NextResponse.json(
       { error: "Failed to get a response from the AI assistant." },
       { status: 500 }

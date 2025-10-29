@@ -14,7 +14,7 @@ interface ConfirmDeleteModalProps {
 
 // Standard style object for an MUI modal
 const style = {
-  position: 'absolute' as 'absolute',
+  position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -23,7 +23,7 @@ const style = {
   borderRadius: 5, // Softer corners
   boxShadow: 24,
   p: 4,
-};
+} as const;
 
 export default function ConfirmDeleteModal({ open, onClose, onConfirm, chatTitle }: ConfirmDeleteModalProps) {
   return (
