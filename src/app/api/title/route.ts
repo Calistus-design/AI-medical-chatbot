@@ -57,10 +57,11 @@ export async function POST(req: Request) {
     // 6. Return a success response
     return NextResponse.json({ success: true, title: newTitle });
 
-  } catch (error: any) {
-    console.error("--- ERROR IN /api/title ROUTE ---", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("--- ERROR IN /api/title ROUTE ---", errorMessage);
     return NextResponse.json(
-      { error: "Failed to generate title." },
+      { error: "Failed to generate a title." },
       { status: 500 }
     );
   }

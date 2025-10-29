@@ -62,7 +62,7 @@ useEffect(() => {
         const response = await fetch(`/api/conversations/${id}`);
         if (!response.ok) throw new Error('Failed to fetch initial messages.');
         const data = await response.json();
-        const formattedMessages: Message[] = data.map((msg: any, index: number) => ({
+        const formattedMessages: Message[] = data.map((msg: { role: 'user' | 'assistant'; content: string }, index: number) => ({
           id: Date.now() + index,
           role: msg.role,
           content: msg.content,
@@ -220,7 +220,7 @@ const handleSelectChat = async (id: string) => {
     const response = await fetch(`/api/conversations/${id}`);
     if (!response.ok) throw new Error('Failed to fetch messages.');
     const data = await response.json();
-    const formattedMessages: Message[] = data.map((msg: any, index: number) => ({
+    const formattedMessages: Message[] = data.map((msg: { role: 'user' | 'assistant'; content: string }, index: number) => ({
       id: Date.now() + index,
       role: msg.role,
       content: msg.content,

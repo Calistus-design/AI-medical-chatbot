@@ -21,7 +21,7 @@ const theme = createTheme({
 });
 
 
-export default function ThemeRegistry(props: { options: any; children: React.ReactNode; }) {
+export default function ThemeRegistry(props: { options: { key: string }; children: React.ReactNode; }) {
   const { options, children } = props;
 
   const [{ cache, flush }] = React.useState(() => {
@@ -31,9 +31,9 @@ export default function ThemeRegistry(props: { options: any; children: React.Rea
     let inserted: string[] = [];
     cache.insert = (...args) => {
       const serialized = args[1];
-      if (cache.inserted[serialized] === undefined) {
-        inserted.push(serialized);
-      }
+      if (cache.inserted[serialized.name] === undefined) {
+      inserted.push(serialized.name);
+    }
       return prevInsert(...args);
     };
     const flush = () => {
@@ -51,7 +51,7 @@ export default function ThemeRegistry(props: { options: any; children: React.Rea
     }
     let styles = '';
     for (const name of names) {
-      const tag = cache.sheet.tags[name];
+      const tag = (cache.sheet.tags as unknown as Record<string, HTMLStyleElement>)[name];
       if (tag) {
         styles += tag.textContent;
      }
