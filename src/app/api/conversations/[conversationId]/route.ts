@@ -7,10 +7,10 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   req: Request,
-  { params }: { params: { conversationId: string } }
+  context: { params: Promise<{ conversationId: string }> } // The new signature
 ) {
-  const supabase = await createClient(); // <-- Must now be awaited
-  const { conversationId } = params;
+  const supabase = await createClient();
+  const { conversationId } = await context.params; // We must 'await' the params
 
   try {
     const { data: { session } } = await supabase.auth.getSession();
@@ -42,10 +42,10 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { conversationId: string } }
+  context: { params: Promise<{ conversationId: string }> } // The new signature
 ) {
-  const supabase = await createClient(); // <-- Must now be awaited
-  const { conversationId } = params;
+  const supabase = await createClient();
+  const { conversationId } = await context.params; // We must 'await' the params
 
   try {
     const { data: { session } } = await supabase.auth.getSession();
@@ -75,10 +75,10 @@ export async function DELETE(
 // --- ADD THIS NEW PATCH FUNCTION ---
 export async function PATCH(
   req: Request,
-  { params }: { params: { conversationId: string } }
+  context: { params: Promise<{ conversationId: string }> } // The new signature
 ) {
   const supabase = await createClient();
-  const { conversationId } = params;
+  const { conversationId } = await context.params; // We must 'await' the params
   const { title } = await req.json(); // Get the new title from the request body
 
   // Basic validation
