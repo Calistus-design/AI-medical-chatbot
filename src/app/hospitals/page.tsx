@@ -33,8 +33,9 @@ export default function HospitalsPage() {
       const data: Hospital[] = await response.json();
       setHospitals(data);
       setStatus('success');
-    } catch (err: any) {
-      setError(err.message);
+      } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while fetching by location.";
+      setError(errorMessage);
       setStatus('error');
     }
   };
@@ -53,11 +54,11 @@ export default function HospitalsPage() {
       const data: Hospital[] = await response.json();
       setHospitals(data);
       setStatus('success');
-    } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
-    setError(errorMessage);
-    setStatus('error');
-}
+      } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while fetching by name.";
+      setError(errorMessage);
+      setStatus('error');
+      }
   };
 
   // This useEffect still runs on page load to get location
