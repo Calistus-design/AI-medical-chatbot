@@ -1,28 +1,50 @@
 // File: src/components/Navbar.tsx
+
 'use client';
 
-import { useState } from 'react'; // <-- ADDED 'useState' HERE
+import { useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close'; 
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function Navbar() {
-  const { session, supabase, isSidebarOpen, toggleSidebar } = useAuth(); // Removed isSidebarOpen, not needed here
+  const { session, supabase, isSidebarOpen, toggleSidebar } = useAuth();
   const router = useRouter();
+
+  // --- 1. State for the DESKTOP profile menu (already exists) ---
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  // --- 2. State for the NEW MOBILE navigation menu ---
+  const [mobileMenuAnchorEl, setMobileMenuAnchorEl] = useState<null | HTMLElement>(null);
+
+  // --- Handlers for DESKTOP profile menu (already exists) ---
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
+  // --- Handlers for NEW MOBILE navigation menu ---
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMobileMenuAnchorEl(event.currentTarget);
+  };
+  const handleMobileMenuClose = () => {
+    setMobileMenuAnchorEl(null);
+  };
+  
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    handleClose();
+    handleClose(); // Closes desktop menu
+    handleMobileMenuClose(); // Closes mobile menu
     router.push('/');
     router.refresh();
+  };
+
+  const navigateAndCloseMenus = (path: string) => {
+    router.push(path);
+    handleClose();
+    handleMobileMenuClose();
   };
 
   return (
@@ -36,7 +58,7 @@ export default function Navbar() {
             onClick={toggleSidebar}
             sx={{ mr: 2 }}
           >
-            {isSidebarOpen ? <CloseIcon /> : <MenuIcon />} 
+            {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
         )}
         <LocalHospitalIcon sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} />
@@ -46,6 +68,8 @@ export default function Navbar() {
           </NextLink>
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
+
+        {/* --- 3. DESKTOP Navigation Links (already exists, no change) --- */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
           <Button component={NextLink} href="/" color="inherit">Home</Button>
           <Button component={NextLink} href="/about" color="inherit">About</Button>
@@ -63,10 +87,10 @@ export default function Navbar() {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 keepMounted
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                open={Boolean(anchorEl)} // <-- ADDED THIS 'open' PROP
+                open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem component={NextLink} href="/profile" onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={() => navigateAndCloseMenus('/profile')}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
@@ -74,8 +98,55 @@ export default function Navbar() {
             <Button component={NextLink} href="/login" variant="outlined">Log In</Button>
           )}
         </Box>
-        {/* You may want to add a mobile menu here for non-auth pages if needed */}
+        
+        {/* --- 4. NEW Mobile Menu Icon (Hamburger) --- */}
+        {/* This Box is visible ONLY on mobile screens */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls="mobile-menu"
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+            >
+                <MenuIcon />
+            </IconButton>
+        </Box>
       </Toolbar>
+
+      {/* --- 5. NEW Mobile Menu Dropdown --- */}
+      <Menu
+        id="mobile-menu"
+        anchorEl={mobileMenuAnchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(mobileMenuAnchorEl)}
+        onClose={handleMobileMenuClose}
+        // Apply styling to make it look good on mobile
+        sx={{ display: { xs: 'block', md: 'none' } }}
+      >
+        <MenuItem onClick={() => navigateAndCloseMenus('/')}>Home</MenuItem>
+        <MenuItem onClick={() => navigateAndCloseMenus('/about')}>About</MenuItem>
+        <MenuItem onClick={() => navigateAndCloseMenus('/hospitals')}>Find Hospital</MenuItem>
+        
+        {/* Conditional rendering for login/logout just like on desktop */}
+        {session ? (
+          <div>
+            <MenuItem onClick={() => navigateAndCloseMenus('/profile')}>Profile</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </div>
+        ) : (
+          <MenuItem onClick={() => navigateAndCloseMenus('/login')}>Log In</MenuItem>
+        )}
+      </Menu>
     </AppBar>
   );
 }
