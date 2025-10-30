@@ -1,7 +1,7 @@
-// File: src/app/chat/page.tsx
+//src/app/chat/[[...conversationId]]/page.tsx
 'use client';
 
-import { useState, useEffect, useRef, use } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Box, Drawer } from '@mui/material';
 
@@ -24,7 +24,7 @@ export default function ChatPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [isManuallyUpdating, setIsManuallyUpdating] = useState(false);
+  //const [isManuallyUpdating, setIsManuallyUpdating] = useState(false);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const streamRef = useRef<NodeJS.Timeout | null>(null);
@@ -60,7 +60,7 @@ export default function ChatPage() {
     const newUserMessage: Message = { id: Date.now(), content: text, role: 'user' };
     setMessages((prev) => [...prev, newUserMessage]);
     setIsTyping(true);
-    setIsManuallyUpdating(true);
+    //setIsManuallyUpdating(true);
 
     let conversationIdToUpdate = activeConversationId;
 
@@ -135,7 +135,7 @@ export default function ChatPage() {
             ]);
 
           handleRefreshConversations();
-          setIsManuallyUpdating(false);
+          //setIsManuallyUpdating(false);
           return;
         }
         setMessages((prev) =>
@@ -147,34 +147,36 @@ export default function ChatPage() {
         );
         idx++;
       }, 5);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('SendMessage error:', err);
       setIsTyping(false);
-      setIsManuallyUpdating(false);
+      //setIsManuallyUpdating(false);
     }
   };
+
+  
 
   // ─── Select chat from sidebar ────────────────────────────────────
   const handleSelectChat = async (id: string) => {
     setIsTyping(true);
-    setIsManuallyUpdating(true);
+    //setIsManuallyUpdating(true);
     setMessages([]);
     try {
       const res = await fetch(`/api/conversations/${id}`);
       if (!res.ok) throw new Error('Failed to fetch messages');
       const data = await res.json();
-      const formatted = data.map((m: any, i: number) => ({
+      const formatted = data.map((m: { role: 'user' | 'assistant'; content: string }, i: number) => ({
         id: Date.now() + i,
         role: m.role,
         content: m.content,
       }));
       setMessages(formatted);
       setActiveConversationId(id);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     } finally {
       setIsTyping(false);
-      setIsManuallyUpdating(false);
+      //setIsManuallyUpdating(false);
       if (isSidebarOpen) toggleSidebar();
     }
   };
