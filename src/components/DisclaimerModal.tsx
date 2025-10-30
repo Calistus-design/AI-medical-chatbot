@@ -32,10 +32,10 @@ export default function DisclaimerModal({ open, onClose }: DisclaimerModalProps)
     >
       <Box sx={style}>
         <Typography id="disclaimer-title" variant="h6" component="h2">
-          CM.Medical Disclaimer
+          Medical Disclaimer
         </Typography>
         <Typography id="disclaimer-description" sx={{ mt: 2 }}>
-          Calistus This is an AI assistant. The information provided is for educational
+          This is an AI assistant. The information provided is for educational
           purposes only and is not a substitute for professional medical advice,
           diagnosis, or treatment. Always seek the advice of your physician.
         </Typography>
