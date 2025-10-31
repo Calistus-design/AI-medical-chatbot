@@ -204,7 +204,6 @@ export default function ChatPage() {
     <Box sx={{ display: 'flex', height: 'calc(100vh - 65px)' }}>
       <DisclaimerModal open={modalOpen} onClose={handleCloseModal} />
 
-      {session && (
         <Drawer
           variant={isMobile ? 'temporary' : 'persistent'}
           anchor="left"
@@ -231,7 +230,6 @@ export default function ChatPage() {
             refreshConversations={handleRefreshConversations}
           />
         </Drawer>
-      )}
 
       <Box
         component="main"
@@ -243,7 +241,7 @@ export default function ChatPage() {
   // This logic correctly handles all cases:
   // - On mobile, it does nothing (marginLeft: 0).
   // - On desktop, it applies the negative margin to hide under the closed sidebar.
-  marginLeft: (session && !isMobile) ? `-${DRAWER_WIDTH}px` : 0,
+  marginLeft: !isMobile ? `-${DRAWER_WIDTH}px` : 0,
 
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
