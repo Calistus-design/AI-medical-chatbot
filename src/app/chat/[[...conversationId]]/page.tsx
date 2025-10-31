@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Box, Drawer } from '@mui/material';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 // Custom components
 import ChatInput from '@/components/ChatInput';
@@ -29,6 +30,9 @@ export default function ChatPage() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const streamRef = useRef<NodeJS.Timeout | null>(null);
   const userMessagesCount = messages.filter((m) => m.role === 'user').length;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // ─── Auto-scroll on new user message ─────────────────────────────
   useEffect(() => {
@@ -202,9 +206,11 @@ export default function ChatPage() {
 
       {session && (
         <Drawer
-          variant="persistent"
+          variant={isMobile ? 'temporary' : 'persistent'}
           anchor="left"
           open={isSidebarOpen}
+          onClose={toggleSidebar}
+          ModalProps={{ keepMounted: true }}
           sx={{
             width: DRAWER_WIDTH,
             flexShrink: 0,
@@ -230,15 +236,29 @@ export default function ChatPage() {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          marginLeft: `-${DRAWER_WIDTH}px`,
-          ...(isSidebarOpen &&
-            session && {
-              marginLeft: 0,
-            }),
-        }}
+  flexGrow: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  
+  // This logic correctly handles all cases:
+  // - On mobile, it does nothing (marginLeft: 0).
+  // - On desktop, it applies the negative margin to hide under the closed sidebar.
+  marginLeft: (session && !isMobile) ? `-${DRAWER_WIDTH}px` : 0,
+
+  transition: theme.transitions.create('margin', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+
+  // This logic now correctly only applies the "push" effect on desktop.
+  ...(isSidebarOpen && !isMobile && {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: 0,
+  }),
+}}
       >
         <div className="flex flex-col h-full max-w-4xl mx-auto flex-1 w-full">
           {messages.length === 0 && !isTyping ? (
@@ -265,4 +285,4 @@ export default function ChatPage() {
       </Box>
     </Box>
   );
-}
+} 
