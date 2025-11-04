@@ -80,7 +80,7 @@ export default function HospitalsPage() {
     if (userCoords) {
       findHospitals(); // Call with no search term for the initial load of nearest hospitals
     }
-  }, [userCoords]); // This dependency ensures it runs only when userCoords has a value
+  }, [userCoords, findHospitals]); // This dependency ensures it runs only when userCoords has a value
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

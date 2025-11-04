@@ -18,7 +18,7 @@ import EmergencyButton from '@/components/EmergencyButton';
 const DRAWER_WIDTH = 280;
 
 export default function ChatPage() {
-  const { session, isSidebarOpen, toggleSidebar } = useAuth();
+  const { isSidebarOpen, toggleSidebar } = useAuth();
 
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);

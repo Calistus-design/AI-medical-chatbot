@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function Navbar() {
-  const { session, isSidebarOpen, toggleSidebar } = useAuth();
+  const {isSidebarOpen, toggleSidebar } = useAuth();
 
   return (
     <AppBar
