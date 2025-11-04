@@ -25,7 +25,21 @@ export default function HospitalCard({ hospital }: HospitalCardProps) {
   const distanceInKm = (hospital.distance_meters / 1000).toFixed(1);
 
   return (
-    <Card variant="outlined" sx={{ mb: 2 }}>
+    <Card 
+      variant="outlined" 
+      sx={{ 
+        mb: 2,
+        // --- THIS IS THE CORRECTED & IMPROVED HOVER EFFECT ---
+        // 1. Explicitly add 'border-color' to the transition property
+        transition: 'transform 0.2s ease-in-out, box-shadow 0.9s ease-in-out, border-color 0.2s ease-in-out',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.12)', // A slightly stronger shadow
+          // 2. Change the border color to our primary 'action-green' color on hover
+          borderColor: 'primary.main', 
+        }
+
+      }}>
       <CardContent>
         <Typography variant="h6" component="div" gutterBottom>
           {hospital.name}

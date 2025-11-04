@@ -220,6 +220,7 @@ export default function ChatPage() {
               height: 'calc(100% - 65px)',
               borderRight: '1px solid',
               borderColor: 'divider',
+              //backgroundColor: 'white', 
             },
           }}
         >
@@ -260,9 +261,10 @@ export default function ChatPage() {
       >
         <div className="flex flex-col h-full max-w-4xl mx-auto flex-1 w-full">
           {messages.length === 0 && !isTyping ? (
-            <div className="flex-1 flex flex-col justify-center items-center p-4">
+            <div className="flex-1 flex flex-col justify-center items-center p-4 animate-fade-in-up">
               <EmptyChat />
-              <div className="mt-8 w-full">
+             
+              <div className="mt-8 w-full p-4 bg-white border-t shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.02)]">
                 <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
               </div>
             </div>
@@ -274,7 +276,7 @@ export default function ChatPage() {
                 ))}
                 {isTyping && <TypingIndicator />}
               </div>
-              <div className="p-4 bg-white border-t">
+              <div className="p-4 bg-white border-t shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.02)]">
                 <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
               </div>
             </>

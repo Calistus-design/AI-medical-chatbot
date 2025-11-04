@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import HospitalCard, { Hospital } from '@/components/HospitalCard';
 import { CircularProgress, Typography, Alert, Box, TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear'; 
+import ClearIcon from '@mui/icons-material/Clear';
 
 type Status = 'idle' | 'loading' | 'success' | 'error' | 'permission_denied';
 
@@ -14,67 +14,59 @@ export default function HospitalsPage() {
   const [status, setStatus] = useState<Status>('idle');
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [error, setError] = useState<string | null>(null);
-
-  // --- NEW STATE FOR THE SEARCH BAR ---
   const [searchTerm, setSearchTerm] = useState('');
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
 
-  // Function to find hospitals by GEOLOCATION
-  const findHospitalsByLocation = async (latitude: number, longitude: number) => {
+  // --- NEW UNIFIED FETCH FUNCTION ---
+  const findHospitals = async (term: string | null = null) => {
+    if (!userCoords) {
+      setError('Cannot search for hospitals without your location. Please allow location access and refresh.');
+      setStatus('permission_denied');
+      return;
+    }
+
     setStatus('loading');
     setError(null);
     try {
       const response = await fetch('/api/hospitals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ latitude, longitude }),
+        body: JSON.stringify({
+          latitude: userCoords.lat,
+          longitude: userCoords.lon,
+          searchTerm: term, // This will be the search string or null for initial load
+        }),
       });
-      if (!response.ok) throw new Error('Failed to fetch hospitals by location.');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch hospitals.');
+      }
+
       const data: Hospital[] = await response.json();
       setHospitals(data);
       setStatus('success');
-      } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while fetching by location.";
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
       setError(errorMessage);
       setStatus('error');
     }
   };
 
-  // --- NEW FUNCTION TO FIND HOSPITALS BY NAME ---
-  const findHospitalsByName = async (term: string) => {
-    setStatus('loading');
-    setError(null);
-    try {
-      const response = await fetch('/api/hospitals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ searchTerm: term }),
-      });
-      if (!response.ok) throw new Error('Failed to fetch hospitals by name.');
-      const data: Hospital[] = await response.json();
-      setHospitals(data);
-      setStatus('success');
-      } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred while fetching by name.";
-      setError(errorMessage);
-      setStatus('error');
-      }
-  };
-
-  // This useEffect still runs on page load to get location
+  // This first useEffect runs only ONCE to get the user's location.
   useEffect(() => {
     if (!navigator.geolocation) {
       setStatus('permission_denied');
       setError('Geolocation is not supported. Please use the search bar.');
       return;
     }
-    setStatus('loading');
+    
+    setStatus('loading'); // Show loading while we ask for permission
     navigator.geolocation.getCurrentPosition(
       (position) => {
-    const { latitude, longitude } = position.coords;
-    setUserCoords({ lat: latitude, lon: longitude }); // <-- SAVE THE COORDS
-    findHospitalsByLocation(latitude, longitude);
-  },
+        const { latitude, longitude } = position.coords;
+        setUserCoords({ lat: latitude, lon: longitude }); // Just save the coordinates here
+      },
       (error) => {
         console.error("Geolocation error:", error);
         setStatus('permission_denied');
@@ -83,18 +75,28 @@ export default function HospitalsPage() {
     );
   }, []);
 
-  // --- NEW HANDLER FOR THE SEARCH FORM ---
+  // This second useEffect triggers the actual API call *after* the coordinates have been successfully set.
+  useEffect(() => {
+    if (userCoords) {
+      findHospitals(); // Call with no search term for the initial load of nearest hospitals
+    }
+  }, [userCoords]); // This dependency ensures it runs only when userCoords has a value
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      findHospitalsByName(searchTerm.trim());
+      findHospitals(searchTerm.trim()); // Call with the search term
+    }
+  };
+  
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    if (userCoords) {
+      findHospitals(); // Call with no search term to reset to nearest hospitals
     }
   };
 
   const renderContent = () => {
-    // We only show the loading spinner, error, or permission denied states
-    // during the initial page load. After that, the search results will
-    // either show hospitals or an empty state.
     switch (status) {
       case 'loading':
         return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 4 }} />;
@@ -104,9 +106,17 @@ export default function HospitalsPage() {
         return <Alert severity="warning">{error}</Alert>;
       case 'success':
         return hospitals.length > 0 ? (
-          hospitals.map((hospital) => (
-            <HospitalCard key={hospital.id} hospital={hospital} />
-          ))
+          <div key={hospitals.length}>
+            {hospitals.map((hospital, index) => (
+              <div
+                key={hospital.id}
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}
+              >
+                <HospitalCard hospital={hospital} />
+              </div>
+            ))}
+          </div>
         ) : (
           <Typography sx={{ mt: 4, textAlign: 'center' }}>
             No hospitals found matching your search.
@@ -117,20 +127,6 @@ export default function HospitalsPage() {
     }
   };
 
-  const handleClearSearch = () => {
-  setSearchTerm(''); // Clear the input field
-  if (userCoords) {
-    // If we have the user's location, re-run the original search
-    findHospitalsByLocation(userCoords.lat, userCoords.lon);
-  } else {
-    // If we never got their location, just clear the results
-    setHospitals([]);
-    // The 'permission_denied' status will show the original warning message
-    setStatus('permission_denied'); 
-    setError('Location permission denied. Please use the search bar to find a hospital.');
-  }
-};
-
   return (
     <main className="flex flex-col items-center p-4 md:p-12">
       <div className="w-full max-w-2xl">
@@ -138,58 +134,38 @@ export default function HospitalsPage() {
           Hospital Finder
         </Typography>
 
-        {/* --- NEW SEARCH BAR FORM --- */}
         <Box component="form" onSubmit={handleSearchSubmit} sx={{ mb: 6, maxWidth: '1000px', mx: 'auto' }}>
-  <TextField
-  fullWidth
-  size="small" 
-  variant="outlined"
-  placeholder="Search by hospital name..."
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-  InputProps={{
-  sx: {
-    borderRadius: '999px',
-    paddingRight: '6px',
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'action-green',
-    },
-  },
-  // We now have two adornments: a conditional clear button, and the search button.
-  endAdornment: (
-    <InputAdornment position="end" sx={{ display: 'flex', gap: 0.5 }}>
-      {searchTerm && ( // <-- Only show the clear button if there is a search term
-        <IconButton
-          aria-label="clear search"
-          onClick={handleClearSearch}
-          edge="end"
-          size="small"
-        >
-          <ClearIcon />
-        </IconButton>
-      )}
-      <Button
-        type="submit"
-        aria-label="search"
-        variant="contained"
-        sx={{
-          borderRadius: '999px',
-          minWidth: '36px',
-          height: '36px',
-          padding: 0,
-          backgroundColor: 'action-green',
-          '&:hover': { backgroundColor: 'green.700' },
-        }}
-      >
-        <SearchIcon />
-      </Button>
-    </InputAdornment>
-  ),
-}}
-/>   
-</Box>
+          <TextField
+            fullWidth
+            size="small" 
+            variant="outlined"
+            placeholder="Search by hospital name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              sx: {
+                borderRadius: '999px',
+                paddingRight: '6px',
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'action-green',
+                },
+              },
+              endAdornment: (
+                <InputAdornment position="end" sx={{ display: 'flex', gap: 0.5 }}>
+                  {searchTerm && (
+                    <IconButton aria-label="clear search" onClick={handleClearSearch} edge="end" size="small">
+                      <ClearIcon />
+                    </IconButton>
+                  )}
+                  <Button type="submit" aria-label="search" variant="contained" sx={{ borderRadius: '999px', minWidth: '36px', height: '36px', padding: 0, backgroundColor: 'action-green', '&:hover': { backgroundColor: 'green.700' }}}>
+                    <SearchIcon />
+                  </Button>
+                </InputAdornment>
+              ),
+            }}
+          />   
+        </Box>
 
-        {/* --- DYNAMIC CONTENT AREA --- */}
         <Typography variant="h4" sx={{ mb: 4 }}>
           Results
         </Typography>

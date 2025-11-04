@@ -24,7 +24,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
   const wrapperClasses = isUser ? 'flex justify-end' : 'flex justify-start';
 
   return (
-    <div className={`w-full mb-2 ${wrapperClasses}`}>
+    <div className={`w-full mb-2 ${wrapperClasses} animate-bubble-in`}>
       <div className={`p-3 rounded-lg max-w-2xl ${bubbleClasses}`}>
   {/* If the content is a string, render it as Markdown. Otherwise, render it directly. */}
   {typeof message.content === 'string' ? (

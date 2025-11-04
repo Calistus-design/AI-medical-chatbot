@@ -1,15 +1,21 @@
 // File: src/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css"; // <-- This line loads all your Tailwind CSS. It MUST be here.
+// 1. Import 'Roboto' instead of 'Inter'
+import { Roboto } from "next/font/google";
+import "./globals.css";
 
-// These are the components that provide global functionality to your app.
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Navbar from "@/components/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+// 2. Configure Roboto with the specific weights we will use for our design.
+//    This ensures only the necessary font files are loaded.
+const roboto = Roboto({
+  weight: ['300', '400', '500', '700'],
+  subsets: ["latin"],
+  display: 'swap', // Improves font loading performance
+});
 
 export const metadata: Metadata = {
   title: "AI First-Aid Assistant",
@@ -19,17 +25,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      {/* The `min-h-screen` and `flex` classes are crucial for your layout. */}
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
-        {/*
-          1. AuthProvider must be near the top so the whole app can access the session.
-        */}
+      {/* 3. Apply the roboto.className instead of inter.className */}
+      <body className={`${roboto.className} flex flex-col min-h-screen bg-gradient-to-br from-primary-blue/35 to-background`}>
         <AuthProvider>
-          {/*
-            2. ThemeRegistry is ESSENTIAL. It injects all the Material-UI styles.
-               If this is missing or in the wrong place, the UI will break exactly
-               as you've seen. It must wrap the Navbar and the page content.
-          */}
           <ThemeRegistry options={{ key: 'mui' }}>
             <Navbar />
             <main className="flex-1 flex flex-col">

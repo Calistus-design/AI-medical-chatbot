@@ -1,10 +1,9 @@
 // File: src/components/Navbar.tsx
-
 'use client';
 
 import NextLink from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material'; // <-- Step 1 Change
+import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -13,8 +12,24 @@ export default function Navbar() {
   const { session, isSidebarOpen, toggleSidebar } = useAuth();
 
   return (
-    <AppBar position="sticky" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider', height: '65px' }}>
-      <Toolbar>
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        height: '65px',
+        // ✅ Proper frosted-glass effect
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)', // Safari support
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+        color: 'text.primary',
+        zIndex: (theme) => theme.zIndex.drawer + 1, // ensure it's above sidebar
+        isolation: 'isolate', // ✅ ensures the blur applies properly
+      }}
+    >
+      <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -24,19 +39,17 @@ export default function Navbar() {
           >
             {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
-        
-        
-        <LocalHospitalIcon sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} />
-        
-        <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', flexGrow: 1 }}>
-          <NextLink href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            AI First-Aid
-          </NextLink>
-        </Typography>
 
-        {/* --- Step 2 Change --- */}
+          <LocalHospitalIcon sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} />
+
+          <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+            <NextLink href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              AI First-Aid
+            </NextLink>
+          </Typography>
+        </Box>
+
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* This button is always visible */}
           <Button
             component={NextLink}
             href="/hospitals"
@@ -44,26 +57,14 @@ export default function Navbar() {
             sx={{
               backgroundColor: 'action-green',
               '&:hover': { backgroundColor: 'green.700' },
-              minWidth: { xs: 40, sm: 120 }, // optional: compact on mobile
-              px: { xs: 1.5, sm: 2 },       // adjust padding
+              minWidth: { xs: 40, sm: 120 },
+              px: { xs: 1.5, sm: 2 },
             }}
           >
-            {/* Desktop text */}
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Find Hospital</Box>
-
-            {/* Mobile icon */}
-            {/*<LocalHospitalIcon sx={{ display: { xs: 'block', sm: 'none' } }} />*/}
             <Box sx={{ display: { xs: 'block', sm: 'none' } }}>Hospital</Box>
           </Button>
-
-          {/* This button only appears if the user is NOT logged in */}
-          {!session && (
-            <Button component={NextLink} href="/login" variant="outlined">
-              Log In
-            </Button>
-          )}
         </Box>
-        
       </Toolbar>
     </AppBar>
   );
