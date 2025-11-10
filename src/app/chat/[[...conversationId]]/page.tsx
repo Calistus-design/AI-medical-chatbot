@@ -21,6 +21,13 @@ import ScrollToBottomButton from '@/components/ScrollToBottomButton';
 
 const DRAWER_WIDTH = 280;
 
+ interface ChatMessageResponse {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  is_emergency_prompt?: boolean;
+}
+
 export default function ChatPage() {
   // 2. INITIALIZE hooks
   const { isSidebarOpen, toggleSidebar } = useAuth();
@@ -48,6 +55,7 @@ export default function ChatPage() {
     const urlConvId = params.conversationId ? (params.conversationId[0] as string) : null;
     setActiveConversationId(urlConvId); // Sync our state with the URL
 
+   
     const loadChatHistory = async () => {
       if (urlConvId) {
         setMessages([]); // Clear old messages before loading new ones
@@ -56,7 +64,7 @@ export default function ChatPage() {
           const res = await fetch(`/api/conversations/${urlConvId}`);
           if (!res.ok) throw new Error('Failed to fetch messages');
           const data = await res.json();
-          const formatted = data.map((m: any, i: number) => {
+          const formatted = data.map((m: ChatMessageResponse, i: number) => {
             // If the flag is true, create a message with the EmergencyButton component
             if (m.is_emergency_prompt) {
               return { id: Date.now() + i, role: 'assistant', content: <EmergencyButton /> };
