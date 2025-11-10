@@ -1,0 +1,67 @@
+hospital_name,address,contact,latitude,longitude
+Saint Mary's Mission Hospital,Police Dog Unit Road,+254 717305204,-1.322328,36.7744036
+The Aga Khan Medical Centre Tmall,Langata Road,+25420 3662584,-1.3121609,36.8168874
+Ngaira Health Centre,Kinsasha Road,+254 726 231288,-1.2735567,36.8313235
+Aga Khan Hospital Komarock,Kangaru Road,+254 700744491,-1.2675516,36.9056199
+Rosa clinic,Thayu,+254 700634849,-1.2626898,36.8633061
+AAR Healthcare Buruburu,Mumias South Road,+254 780888234,-1.283804,36.8799799
+Equity Afia Kawangware,Naivasha Road,+254 765000004,-1.2886178,36.7434232
+Kilimani Childrens Clinic,Likoni Close,+254 204404949,-1.2839561,36.789738
+Health Gate Hospital,Muratina Street,+254 202355355,-1.2796498,36.8461108
+Njiru Health Centre,,+254 20780909,-1.2494578,36.9338202
+Langata Hospital,Kitengela Road,+254 724485376,-1.3276957,36.7891893
+Dr. Martin Kimemia,Hospital Road Upperhill,+254 720790852,-1.2983494,36.8085546
+Aga Khan University Hospital,3rd Parklands Avenue,+254 111011888,-1.261757976,36.82384958
+MP Shah Hospital,Shivachi Road,+254 111000600,-1.263558706,36.81211041
+Kenyatta National Hospital,Along Hospital Road Upper Hill,+254 202726300,-1.300873322,36.80703232
+Maria Immaculata Hospital (MCH),Gitanga Road,+254 722421798,-1.289337759,36.76477386
+Pumwani Maternity Hospital,General Waruingi Street,+254 720381038,-1.281127211,36.84562857
+Dr Rasik Kantaria Jalaram Medical Center,Jalaram Road,+254 205012200,-1.258270456,36.806713
+Swaminarayan Hospital,,+254 711500400,-1.329285097,36.79821907
+Kenyatta National Hospital,"Hospital Road, Upper Hill, Nairobi",+254 202726300,-1.30054,36.80695
+The Nairobi Hospital,"Argwings Kodhek Road, Upper Hill, Nairobi",+254 202845000,-1.296115,36.804718
+Aga Khan University Hospital (Nairobi),"3rd Parklands Avenue (Limuru Road), Nairobi",+254 111011888 ,-1.262306,36.823791
+M. P. Shah Hospital,"Shivachi Rd, Parklands, Nairobi",+254 111000600,-1.2635968,36.8120936
+Karen Hospital,"Langata/Karen Road, Karen, Nairobi",+254 709382000,-1.336111,36.726111
+Gertrude's Children's Hospital,"34 Muthaiga Road, Muthaiga, Nairobi",+254 709529000,-1.25605,36.83178
+Coptic Hospital (Ngong Road),"Ngong Road (near China Centre), Kilimani, Nairobi",+254 711043000,-1.29795,36.79773
+Mater Misericordiae Hospital (Mater),"Mukenia Road / Dunga Road, South B, Nairobi",+254 732163000,-1.3105,36.847
+AAR Hospital (Nairobi),"Muthaiga North Rd, Kiambu Road (opp Karura Forest), Nairobi",+254 111049900,-1.2376761,36.8444555
+Avenue Healthcare (Avenue Hospital),"3rd Parklands Avenue, Parklands, Nairobi",+254 203740000,-1.2629,36.8215
+St. Mulumba Hospital,"Garissa Road, Thika",+254 771555444,-1.0546916,37.1026634
+P.C.E.A Kikuyu Hospital,"P.O box 1010, Kikuyu",+254 202044769,-1.2653633,36.6685652
+St Peters Orthopedic & Surgical Sepcialty Center Ltd,"1739, Kiambu, Kiambu",+254 771555444,-1.2524111,36.6862035
+Miale Medical Centre,"Matangi-theta, Ruiru",+254 705702990,-1.1433174,36.9885477
+Plainsview Hospital,"Thika Road, Ruiru",+254 717703057,-1.1554263,36.9595073
+St Jude Nursing Home,"59,, Gatundu-Juja Road, Kiambu",+254 771555444,-1.016683,36.9143294
+Amani House;St Mary's mother & Child,"Biashara Street Kiambu, Kiambu",+254 722666485,-1.1719825,36.8290571
+St. Gabriel Catholic Hospital,Kenyatta Road,+254 723281855,-1.0335556,36.9177846
+Mercy Light Hospital,"Kiambu Road, Kiambu",+254 116723062,-1.172789,36.8306075
+St Teresias Hospital,"Kiambu Road, kiambu",+254 771555444,-1.1991425,36.8361848
+St. Teresa Hospital,"Kikuyu Road, Kikuyu",+254 771555444,-1.2512546,36.6646187
+Radiant Hospital - Kiambu Branch,"Kiambu Road, Kiambu",+254 709668888,-1.1647571,36.8234758
+Aga Khan Hospital Kitengela,"Oloosirkon/Sholinke ward, Kajiado East, Kajiado, Kenya",+254 111011888,-1.4783967,36.9575703
+Ewuaso Dispensery,"Ewuaso Kedong, Ewuaso Oonkidong'i ward, Kajiado West, Kajiado, Kenya",+254 755456259,-1.1487257,36.4963235
+Border Medicare Centre,"Old Namanga Road, Dalalekutuk ward, Kajiado Central, Kajiado, Kenya",+254 782960986,-1.8420515,36.7899351
+Mobile Clinic,"Eremit, Ewuaso Oonkidong'i ward, Kajiado West, Kajiado, Kenya",+254 763002001,-1.3933105,36.434513
+Kitengela Medical Services,"Kitengela, Kitengela ward, Kajiado East, Kajiado, Kenya",+254 727151821,-1.4708426,36.9634826
+Oloirien dispensary,"Ol Girra, Rombo ward, Loitokitok, Kajiado, Kenya",+254 752183773,-3.1130061,37.7741839
+Oloibor Soit dispensary,"Ol Oibor Soit, Rombo ward, Loitokitok, Kajiado, Kenya",+254 741255697,-3.1707961,37.7753649
+Nolasiti Dispensary,"Rombo ward, Loitokitok, Kajiado, Kenya",+254 782960986,-3.0114094,37.8525241
+Kajiado County Referal Hospital,"Ildamat ward, Kajiado Central, Kajiado, Kenya",+254 791931620,-1.857327,36.7717633
+Ngong Sub-District Hospital,"Ngong, Ngong ward, Kajiado North, Kajiado, Kenya",+254 204338461,-1.365224806,36.65383826
+Njjile Dispensary,"Ewuaso Oonkidong'i ward, Kajiado West, Kajiado, Kenya",+254 721311659,-1.214706079,36.46374289
+Kitengela Sub County Hospital,"Saitoti Road, Noonkopir, Oloosirkon/Sholinke ward, Kajiado East, Kajiado, Kenya",+254 750903785,-1.47029217,36.95414269
+Loitokitok Hospital,"Loitoktok, Kuku ward, Loitokitok, Kajiado, 00209, Kenya",+254 713358169,-2.924775029,37.50457759
+Entasopia Health Centre,"Kalema, Magadi ward, Kajiado West, Kajiado, Kenya",+254 764900042,-1.783868574,36.05338386
+Rombo Health Centre,"Rombo, Rombo ward, Loitokitok, Kajiado, Kenya",+254 202717077,-3.059893868,37.70031479
+Emumwenyi dispensary,"Taveta-Illasit, Rombo, Kajiado, Kenya, Maili Tatu, Rombo ward, Loitokitok, Kajiado, Kenya",+254 782960986,-3.088105214,37.75087946
+Namanga hospital,"Namanga, Kajiado Central, Kajiado, Kenya",+254 720288107,-2.54297434,36.78733796
+Magadi Hospital,"Magadi, Magadi ward, Kajiado West, Kajiado, Kenya",+254 762839631,-1.902784165,36.28596862
+Matasia Nursing Home,"Forest Line Road, Upper Matasia sublocation, Olkeri ward, Kajiado North, Kajiado, Kenya",+254 723385515,-1.392074225,36.68330953
+Getrude Childrens Hospital,"New Valley Road, Kitengela, Kitengela ward, Kajiado East, Kajiado, Kenya",+254 207206000,-1.488332234,36.95552335
+Emotoroki Dispensary,"Matapato North ward, Kajiado Central, Kajiado, Kenya",+254 752183773,-2.2938634,37.03044725
+MRS,"Ewuaso Oonkidong'i ward, Kajiado West, Kajiado, Kenya",+254 796560759,-1.389310411,36.57088788
+Kajiado District Hospital,"Ildamat ward, Kajiado Central, Kajiado, Kenya",+254 791931620,-1.857418474,36.77198065
+Olooltepes Dispensary,"Keekonyokie ward, Kajiado West, Kajiado, Kenya",+254 202684029,-1.467823894,36.73800184
+sajiloni,"Dalalekutuk ward, Kajiado Central, Kajiado, 01100, Kenya",+254 202717077,-1.87671222,36.86274694

@@ -1,4 +1,5 @@
 // File: scripts/seed-csv.mjs
+// run-> node scripts/seed-csv.mjs
 
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
@@ -8,7 +9,7 @@ import 'dotenv/config';
 
 // --- CONFIGURATION ---
 // 1. Point this to the exact name of your CSV file in this 'scripts' folder.
-const CSV_FILE_NAME = 'Hospitals_Data.csv'; 
+const CSV_FILE_NAME = 'Hospital_Data.csv'; 
 
 // --- SCRIPT LOGIC ---
 async function seedFromCsv() {
