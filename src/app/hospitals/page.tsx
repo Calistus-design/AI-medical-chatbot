@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import HospitalCard, { Hospital } from '@/components/HospitalCard';
 import { CircularProgress, Typography, Alert, Box, TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -18,7 +18,8 @@ export default function HospitalsPage() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
 
   // --- NEW UNIFIED FETCH FUNCTION ---
-  const findHospitals = async (term: string | null = null) => {
+  // --- THIS IS THE NEW, STABLE FUNCTION WRAPPED IN useCallback ---
+  const findHospitals = useCallback(async (term: string | null = null) => {
     if (!userCoords) {
       setError('Cannot search for hospitals without your location. Please allow location access and refresh.');
       setStatus('permission_denied');
@@ -34,7 +35,7 @@ export default function HospitalsPage() {
         body: JSON.stringify({
           latitude: userCoords.lat,
           longitude: userCoords.lon,
-          searchTerm: term, // This will be the search string or null for initial load
+          searchTerm: term,
         }),
       });
 
@@ -51,7 +52,7 @@ export default function HospitalsPage() {
       setError(errorMessage);
       setStatus('error');
     }
-  };
+  }, [userCoords]); // <-- This dependency array tells useCallback when to recreate the function
 
   // This first useEffect runs only ONCE to get the user's location.
   useEffect(() => {

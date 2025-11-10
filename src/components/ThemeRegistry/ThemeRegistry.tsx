@@ -1,73 +1,37 @@
 // File: src/components/ThemeRegistry/ThemeRegistry.tsx
 
 'use client';
+
+import * as React from 'react';
+import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import { useServerInsertedHTML } from 'next/navigation';
-import { CacheProvider } from '@emotion/react';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme } from '@mui/material/styles';
-import React from 'react';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#10B981', // Our action-green
-    },
-    background: {
-      default: '#FFFFFF',
-    }
+    primary: { main: '#10B981' },
+    background: { default: '#FFFFFF' },
   },
 });
 
+function createEmotionCache() {
+  const cache = createCache({ key: 'mui', prepend: true });
+  cache.compat = true;
+  return cache;
+}
 
-export default function ThemeRegistry(props: { options: { key: string }; children: React.ReactNode; }) {
-  const { options, children } = props;
+export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
+  const [cache] = React.useState(() => createEmotionCache());
 
-  const [{ cache, flush }] = React.useState(() => {
-    const cache = createCache(options);
-    cache.compat = true;
-    const prevInsert = cache.insert;
-    let inserted: string[] = [];
-    cache.insert = (...args) => {
-      const serialized = args[1];
-     // @ts-expect-error - The linter incorrectly flags this, but it is the expected runtime behavior.
-      if (cache.inserted[serialized] === undefined) {
-        // @ts-expect-error - The linter incorrectly flags this, but it is the expected runtime behavior.
-        inserted.push(serialized);
-      }
-      return prevInsert(...args);
-    };
-    const flush = () => {
-      const prevInserted = inserted;
-      inserted = [];
-      return prevInserted;
-    };
-    return { cache, flush };
-  });
-
-  useServerInsertedHTML(() => {
-    const names = flush();
-    if (names.length === 0) {
-      return null;
-    }
-    let styles = '';
-    for (const name of names) {
-      const tag = (cache.sheet.tags as unknown as Record<string, HTMLStyleElement>)[name];
-      if (tag) {
-        styles += tag.textContent;
-     }
-    }
-    return (
-      <style
-        key={cache.key}
-        data-emotion={`${cache.key} ${names.join(' ')}`}
-        dangerouslySetInnerHTML={{
-          __html: styles,
-        }}
-      />
-    );
-  });
+  useServerInsertedHTML(() => (
+    <style
+      data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(' ')}`}
+      dangerouslySetInnerHTML={{
+        __html: Object.values(cache.inserted).join(''),
+      }}
+    />
+  ));
 
   return (
     <CacheProvider value={cache}>

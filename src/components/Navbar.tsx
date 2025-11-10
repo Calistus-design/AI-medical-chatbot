@@ -40,7 +40,7 @@ export default function Navbar() {
             {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
 
-          <LocalHospitalIcon sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} />
+          <LocalHospitalIcon className="text-action-green" sx={{ mr: 2, color: 'action-green', fontSize: '2rem' }} />
 
           <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
             <NextLink href="/" style={{ textDecoration: 'none', color: 'inherit' }}>

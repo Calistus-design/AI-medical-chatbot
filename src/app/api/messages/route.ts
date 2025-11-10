@@ -1,35 +1,45 @@
 // File: src/app/api/messages/route.ts
 
-import { createClient } from '@/lib/supabase/server'; // <-- IMPORT OUR NEW SERVER CLIENT
+import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const supabase = await createClient(); // <-- USE OUR NEW ASYNC CLIENT
-  const { conversation_id, content, role } = await req.json();
+  const supabase = await createClient();
+  const body = await req.json();
+  const { conversation_id, content, role, is_emergency_prompt } = body;
+
+  console.log("🟢 Received Request Body:", body);
+  console.log("🔵 Coerced Boolean:", Boolean(is_emergency_prompt));
 
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
+      console.log("❌ Unauthorized - No session found");
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // The logic remains the same, but now it uses the new, correctly authenticated client.
-    const { error } = await supabase
-      .from('messages')
-      .insert({
-        conversation_id,
-        content,
-        role,
-        user_id: session.user.id, // We always set the user_id on the server
-      });
+    const insertData = {
+      conversation_id,
+      content,
+      role,
+      user_id: session.user.id,
+      is_emergency_prompt: Boolean(is_emergency_prompt),
+    };
+
+    console.log("🟣 Inserting into Supabase:", insertData);
+
+    const { error } = await supabase.from('messages').insert(insertData);
 
     if (error) {
+      console.error("🔥 Supabase Insert Error:", error);
       throw error;
     }
 
+    console.log("✅ Message inserted successfully!");
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("💥 Route Error:", errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
-}
+  }
 }

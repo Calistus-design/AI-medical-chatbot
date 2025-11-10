@@ -20,7 +20,7 @@ export async function GET(
 
     const { data: messages, error } = await supabase
       .from('messages')
-      .select('role, content')
+      .select('role, content, is_emergency_prompt')
       .eq('conversation_id', conversationId)
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: true });

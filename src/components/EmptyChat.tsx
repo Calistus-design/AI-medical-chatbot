@@ -17,6 +17,7 @@ export default function EmptyChat() {
       }}
     >
       <LocalHospitalIcon
+       className="text-action-green w-10 h-10 sm:w-24 sm:h-24" 
         sx={{
           fontSize: { xs: '2.5rem', sm: '6rem' }, // Large icon size
           color: 'action-green',

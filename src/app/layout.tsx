@@ -24,11 +24,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      {/* 3. Apply the roboto.className instead of inter.className */}
-      <body className={`${roboto.className} flex flex-col min-h-screen bg-gradient-to-br from-primary-blue/35 to-background`}>
+    <html lang="en" className={roboto.className}>
+      <body className="flex flex-col min-h-screen">
         <AuthProvider>
-          <ThemeRegistry options={{ key: 'mui' }}>
+          <ThemeRegistry>
             <Navbar />
             <main className="flex-1 flex flex-col">
               {children}
