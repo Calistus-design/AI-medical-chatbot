@@ -350,10 +350,11 @@ export default function ChatPage() {
       
       /* STATE 3: Active Chat with Messages. Show the conversation. */
         <>
+         
           <div 
             ref={chatContainerRef} 
             onScroll={handleScroll} 
-            className="flex-1 overflow-y-auto p-4 space-y-4 relative"
+            className="flex-1 overflow-y-auto p-4 space-y-4"
           >
             {messages.map((m) => (
               <MessageBubble key={m.id} message={m} />

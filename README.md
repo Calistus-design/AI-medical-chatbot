@@ -1,37 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-Powered First-Aid Assistant
 
-## Getting Started
+![AI First-Aid Assistant Screenshot](https://user-images.githubusercontent.com/121543883/82a1796b-5975-4921-995a-c9d7249a04a5.png)
 
-First, run the development server:
+An intelligent, "Emergency-First" web application designed to provide immediate, reliable first-aid guidance and locate nearby medical facilities.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**[View the Live Demo Here](https://ai-medical-chatbot-one.vercel.app/chat)**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Core Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+-   **Intelligent AI Chatbot**: Provides step-by-step first-aid guidance using a powerful, medical-specific language model (`microsoft/MediPhi-Clinical`).
+-   **Multi-Stage AI Pipeline**: A sophisticated backend that uses a "Gatekeeper" to block off-topic questions and a "Safety Analyst" to detect serious emergencies and proactively recommend action.
+-   **Persistent & Shareable Chats**: Conversations are tied to your account and saved in the URL, allowing you to refresh the page or share a link without losing your chat history.
+-   **Full Chat History Management**: Logged-in users can view, **rename**, and **delete** their past conversations via a collapsible sidebar.
+-   **High-Accuracy Hospital Finder**: Uses geolocation (via PostGIS) to find and display the nearest hospitals, sorted by true distance, and allows for searching by name.
+-   **Secure & Private**: Built with a "privacy-first" mindset using Supabase's Row Level Security to guarantee that users can only ever access their own data.
 
-## Learn More
+## The Vision: "Emergency-First"
 
-To learn more about Next.js, take a look at the following resources:
+The core philosophy of this project is to prioritize speed, simplicity, and zero barriers to access for users in distress. The UI is clean and minimalist, guiding the user to get the help they need as quickly as possible. Every feature, from the AI's proactive emergency prompts to the one-click "Directions" button, is designed with this principle in mind.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+##  A Look Inside: The AI Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project's backend is more than just a simple API call. It's a three-stage pipeline that ensures responses are safe, relevant, and intelligent.
 
-## Deploy on Vercel
+1.  **Stage 1: The Gatekeeper (Intent Classification)**: Before anything else, a zero-shot classifier (`facebook/bart-large-mnli`) inspects the user's query. If it's not a medical question, it's politely rejected, preventing misuse and saving resources.
+2.  **Stage 2: The Brain (RAG & Generation)**: For valid medical questions, we use Retrieval-Augmented Generation (RAG). A `Qwen` embedding model finds relevant first-aid context from a FAISS vector database. This context, along with the user's question and chat history, is then fed to the `microsoft/MediPhi-Clinical` model to generate a high-quality, step-by-step answer.
+3.  **Stage 3: The Safety Analyst (Seriousness Classification)**: After the answer is generated, the classifier runs *again* on the AI's own response. If it detects language indicating a critical emergency (e.g., "stroke," "call emergency services"), it sends a flag to the frontend to proactively display a "Find Nearest Hospital" button.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# AI-medical-chatbot
+-   **Frontend**: Next.js (App Router), React, TypeScript, Material-UI, Tailwind CSS
+-   **Backend**: Python, FastAPI, running on a Kaggle Notebook with GPU acceleration.
+-   **Database**: Supabase (PostgreSQL with PostGIS for geospatial queries).
+-   **Authentication**: Supabase Auth (Email/Password + Google OAuth).
+-   **Deployment**: Vercel (Frontend) and Ngrok (Backend Tunnel).
+
+## Running Locally & Contributing
+
+I welcome contributions! If you'd like to run the project locally, fix a bug, or add a feature, please see my detailed setup guide.
+
+**[View the Setup Guide](./SETUP.md)**
