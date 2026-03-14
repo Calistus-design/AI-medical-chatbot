@@ -1,6 +1,7 @@
 # AI-Powered First-Aid Assistant
 
-![AI First-Aid Assistant Screenshot](https://user-images.githubusercontent.com/121543883/82a1796b-5975-4921-995a-c9d7249a04a5.png)
+<img width="1250" height="873" alt="image" src="https://github.com/user-attachments/assets/7195f69d-a66a-44d0-b739-59fdb6426bf9" />
+
 
 An intelligent, "Emergency-First" web application designed to provide immediate, reliable first-aid guidance and locate nearby medical facilities.
 
